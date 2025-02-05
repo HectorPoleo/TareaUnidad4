@@ -17,7 +17,7 @@ import es.ies.puerto.model.Empleado;
 import es.ies.puerto.model.OperacionesInterface;
 
 /**
- *  @author: alejandrosalazargonzalez
+ *  @author: hectorpoleo
  *  @version: 1.0.0
  */
 public class OperacionesFichero implements OperacionesInterface {
