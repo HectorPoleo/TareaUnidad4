@@ -1,6 +1,6 @@
 package es.ies.puerto.model;
 
-import java.util.Set;
+import java.util.TreeMap;
 
 /**
  *  @author: hectorpoleo
@@ -12,6 +12,6 @@ public interface OperacionesInterface {
     public boolean delete(Empleado empleado);
     public Empleado search(Empleado empleado);
     public Empleado search(String identificador);
-    Set<Empleado> empleadosPorPuesto(String puesto);
-    Set<Empleado> empleadosPorEdad(String fechaInicio, String fechaFin);
+    TreeMap<String,Empleado> empleadosPorPuesto(String puesto);
+    TreeMap<String,Empleado> empleadosPorEdad(String fechaInicio, String fechaFin);
 }

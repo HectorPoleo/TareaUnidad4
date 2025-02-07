@@ -1,1 +1,2 @@
-
+1,Juan Perez,3000.5,Desarrollador,15/10/1995
+2,Ana Gomez,2800.75,Diseniadora,10/01/1990

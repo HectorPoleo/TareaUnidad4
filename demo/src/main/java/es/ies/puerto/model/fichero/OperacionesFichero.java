@@ -10,8 +10,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.TreeMap;
 
 import es.ies.puerto.model.Empleado;
 import es.ies.puerto.model.OperacionesInterface;
@@ -23,7 +22,7 @@ import es.ies.puerto.model.OperacionesInterface;
 public class OperacionesFichero implements OperacionesInterface {
 
     File fichero;
-    String path = "C:\\Users\\Héctor\\Desktop\\demo\\src\\main\\resources\\archivo.txt";
+    String path = "C:\\Users\\Héctor\\Desktop\\git\\TareaUnidad4\\demo\\src\\main\\resources\\archivo.txt";
     public OperacionesFichero(){
         fichero = new File(path);
         if (!fichero.exists() || !fichero.isFile()) {
@@ -36,8 +35,8 @@ public class OperacionesFichero implements OperacionesInterface {
         if (persona == null || persona.getIdentificador().isEmpty() || persona.getIdentificador() == null) {
             return false;
         }
-        Set<Empleado> empleados = read(fichero);
-        if (empleados.contains(persona)) {
+        TreeMap<String, Empleado> empleados = read(fichero);
+        if (empleados.containsValue(persona)) {
             return false;
         }
         return create(persona.toString(), fichero);
@@ -52,18 +51,21 @@ public class OperacionesFichero implements OperacionesInterface {
         }
     }
 
-    private Set<Empleado> read(File file) {
-        Set <Empleado>empleados = new HashSet<>();
+    private TreeMap<String, Empleado> read(File file) {
+        if (file == null){
+            return new TreeMap<>();
+        }
+        TreeMap <String, Empleado>empleados = new TreeMap<>();
         
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] arrayLine = line.split(",");
-                Empleado empleado = new Empleado(arrayLine[0], arrayLine[1], Long.valueOf(arrayLine [2]), arrayLine[4], arrayLine[5]);
-                empleados.add(empleado);
+                Empleado empleado = new Empleado(arrayLine[0], arrayLine[1], Double.parseDouble(arrayLine [2]), arrayLine[3], arrayLine[4]);
+                empleados.put(empleado.getIdentificador(), empleado);
             }
         } catch (IOException e) {
-            return new HashSet<>();
+            return new TreeMap<>();
         }
         return empleados;
     }
@@ -73,14 +75,14 @@ public class OperacionesFichero implements OperacionesInterface {
         if (empleado == null || empleado.getIdentificador().isEmpty() || empleado.getIdentificador() == null) {
             return false;
         }
-        Set<Empleado> empleados = read(fichero);
-        if (!empleados.contains(empleado)) {
+        TreeMap<String, Empleado> empleados = read(fichero);
+        if (!empleados.containsValue(empleado)) {
             return false;
         }
-        for (Empleado empleadoBuscado : empleados) {
+        for (Empleado empleadoBuscado : empleados.values()) {
             if (empleadoBuscado.equals(empleado)) {
-                empleados.remove(empleadoBuscado);
-                empleados.add(empleado);
+                empleados.remove(empleadoBuscado.getIdentificador());
+                empleados.put(empleado.getIdentificador(),empleado);
                 return updateFile(empleados, fichero);
             }
         }
@@ -88,15 +90,15 @@ public class OperacionesFichero implements OperacionesInterface {
         return true;
 }
 
-    private boolean updateFile(Set<Empleado> empleados, File file){
-        String path = file.getAbsolutePath();
+    private boolean updateFile(TreeMap<String, Empleado> empleados, File file){
+        path = file.getAbsolutePath();
         try {
             file.delete();
             file.createNewFile();
         } catch (IOException e) {
             return false;
         }
-        for(Empleado empleado : empleados) {
+        for(Empleado empleado : empleados.values()) {
             create(empleado);
         }
         return true;
@@ -107,13 +109,13 @@ public class OperacionesFichero implements OperacionesInterface {
         if (empleado == null || empleado.getIdentificador().isEmpty() || empleado.getIdentificador() == null) {
             return false;
         }
-        Set<Empleado> empleados = read(fichero);
-        if (!empleados.contains(empleado)) {
+        TreeMap<String, Empleado> empleados = read(fichero);
+        if (!empleados.containsValue(empleado)) {
             return false;
         }
-        for (Empleado empleadoBuscar : empleados) {
+        for (Empleado empleadoBuscar : empleados.values()) {
             if(empleadoBuscar.equals(empleado)) {
-                empleados.remove(empleadoBuscar);
+                empleados.remove(empleadoBuscar.getIdentificador());
                 return updateFile(empleados, fichero);
             }
         }
@@ -125,8 +127,8 @@ public class OperacionesFichero implements OperacionesInterface {
         if (empleado == null || empleado.getIdentificador().isEmpty() || empleado.getIdentificador() == null) {
             return empleado;
         }
-        Set<Empleado> empleados = read(fichero);
-        for (Empleado empleadoBuscar : empleados) {
+        TreeMap<String, Empleado> empleados = read(fichero);
+        for (Empleado empleadoBuscar : empleados.values()) {
             if(empleadoBuscar.equals(empleado)) {
                 return empleadoBuscar;
             }
@@ -144,15 +146,15 @@ public class OperacionesFichero implements OperacionesInterface {
     }
 
     @Override
-    public Set<Empleado> empleadosPorPuesto(String puesto) {
-        Set<Empleado> empleados = new HashSet<>();
+    public TreeMap<String, Empleado> empleadosPorPuesto(String puesto) {
+        TreeMap<String, Empleado> empleados = new TreeMap<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(", ");
-                if (data[2].equalsIgnoreCase(puesto)) {
-                    Empleado empleado = new Empleado(data[0], data[1], Long.valueOf(data [2]), data[4], data[5]);
-                    empleados.add(empleado);
+                if (data[3].equalsIgnoreCase(puesto)) {
+                    Empleado empleado = new Empleado(data[0], data[1], Double.parseDouble(data [2]), data[3], data[4]);
+                    empleados.put(empleado.getIdentificador(),empleado);
                 }
             }
         } catch (IOException e) {
@@ -162,8 +164,8 @@ public class OperacionesFichero implements OperacionesInterface {
     }
 
     @Override
-    public Set<Empleado> empleadosPorEdad(String fechaInicio, String fechaFin) {
-        Set<Empleado> empleados = new HashSet<>();
+    public TreeMap<String, Empleado> empleadosPorEdad(String fechaInicio, String fechaFin) {
+        TreeMap<String, Empleado> empleados = new TreeMap<>();
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             Date inicio = sdf.parse(fechaInicio);
@@ -175,8 +177,8 @@ public class OperacionesFichero implements OperacionesInterface {
                     String[] data = line.split(", ");
                     Date fechaNacimiento = sdf.parse(data[4]);
                     if (!fechaNacimiento.before(inicio) && !fechaNacimiento.after(fin)) {
-                    Empleado empleado = new Empleado(data[0], data[1], Long.valueOf(data [2]), data[4], data[5]);
-                    empleados.add(empleado);
+                    Empleado empleado = new Empleado(data[0], data[1], Double.parseDouble(data [2]), data[3], data[4]);
+                    empleados.put(empleado.getIdentificador(), empleado);
                     }
                 }
             }

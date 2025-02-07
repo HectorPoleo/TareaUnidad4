@@ -9,7 +9,7 @@ import java.util.Objects;
 public class Empleado {
     String identificador;
     String nombre;
-    long sueldo;
+    double sueldo;
     String puesto;
     String fechaNacimiento;
 
@@ -21,7 +21,7 @@ public class Empleado {
     public Empleado(String identificador){
         this.identificador = identificador;
     }
-    public Empleado(String identificador, String nombre, long sueldo,String puesto,String fechanacimiento ){
+    public Empleado(String identificador, String nombre, double sueldo,String puesto,String fechanacimiento ){
         this.identificador = identificador;
         this.nombre = nombre;
         this.sueldo = sueldo;
@@ -53,7 +53,7 @@ public class Empleado {
         return this.nombre;
     }
 
-    public long getSueldo() {
+    public double getSueldo() {
         return this.sueldo;
     }
 
@@ -76,7 +76,7 @@ public class Empleado {
 
     @Override
     public String toString() {
-        return getIdentificador() +"," + getNombre() + "," + getSueldo()+ ","+ getFechaNacimiento();
+        return getIdentificador() +"," + getNombre() + "," + getSueldo()+ ","+ getPuesto()+","+ getFechaNacimiento();
     }
 
     @Override
